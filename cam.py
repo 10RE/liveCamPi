@@ -1,13 +1,12 @@
 import cv2
 import threading
 
-class VideoCamera(object):
+class VideoCamera():
     def __init__(self):
-        self.video = cv2.VideoCapture(-1)
+        self.video = cv2.VideoCapture(0)
         (self.grabbed, self.frame) = self.video.read()
         self.file_name = "camera.jpg"
-        threading.Thread(target=self.update, args=()).start()
-        threading.Thread(target=self.save, args=()).start()
+        threading.Timer(0.1, self.update).start()
 
     def __del__(self):
         print("deleted")
@@ -20,10 +19,12 @@ class VideoCamera(object):
 
     def update(self):
         while True:
-            (self.grabbed, self.frame) = self.video.read()
-
-    def save(self):
-        while True:
-            cv2.imwrite(self.file_name, self.frame)
+            try:
+                (self.grabbed, self.frame) = self.video.read()
+                cv2.imwrite(self.file_name, self.frame)
+            except KeyboardInterrupt:
+                print("KeyboardInterrupt")
+                break
+            
 
 cam = VideoCamera()
